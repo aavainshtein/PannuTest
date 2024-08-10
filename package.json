@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "prettier:check": "prettier --check \"**/*.{js,ts,vue,scss,html,json,sql}\" --ignore-path .gitignore --ignore-path .prettierignore",
+    "prettier:write": "prettier --write \"**/*.{js,ts,vue,scss,html,json,sql}\" --ignore-path .gitignore --ignore-path .prettierignore"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "prettier-plugin-astro": "^0.12.1",
+    "prettier-plugin-sql": "^0.18.1",
+    "prettier-plugin-tailwindcss": "^0.6.6"
+  }
+}

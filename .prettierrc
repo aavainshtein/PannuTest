@@ -1,0 +1,22 @@
+{
+  "singleQuote": true,
+  "semi": false,
+  "singleAttributePerLine": true,
+  "plugins": [
+    "prettier-plugin-astro",
+    "prettier-plugin-tailwindcss",
+    "prettier-plugin-sql"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "*.sql"
+      ],
+      "options": {
+        "parser": "sql",
+        "language": "postgresql",
+        "keywordCase": "upper"
+      }
+    }
+  ]
+}

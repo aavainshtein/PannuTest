@@ -1,0 +1,14 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "hasura": "hasura --envfile ../../.env",
+    "dev": "yarn hasura console --no-browser",
+    "dev-windows": "cross-env yarn hasura console --no-browser"
+  },
+  "devDependencies": {
+    "hasura-cli": "^2.21.0"
+  }
+}

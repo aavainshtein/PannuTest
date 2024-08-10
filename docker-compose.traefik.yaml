@@ -1,0 +1,31 @@
+version: '3.6'
+
+services:
+  traefik:
+    image: traefik:v2.9
+    container_name: traefik
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --api.dashboard=true
+      - --entryPoints.${TRAEFIK_ENTRYPOINT_HTTP_NAME}.address=:80
+      - --entryPoints.${TRAEFIK_ENTRYPOINT_HTTPS_NAME}.address=:443
+      - --entryPoints.${TRAEFIK_ENTRYPOINT_WS_NAME}.address=:8080
+      - --entryPoints.${TRAEFIK_ENTRYPOINT_WSS_NAME}.address=:8443
+    ports:
+      - ${HTTP_PORT}:80
+      - ${HTTPS_PORT}:443
+      - ${WS_PORT}:8080
+      - ${WSS_PORT}:8443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - testTaskCode_default
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik.rule=Host(`traefik.${PROJECT_NAME}.${DOMAIN}`)
+      - traefik.http.routers.traefik.service=api@internal
+
+networks:
+  testTaskCode_default:
+    external: true
