@@ -1,0 +1,188 @@
+type Mutation {
+  actionName: SampleOutput
+}
+
+type Mutation {
+  stripeCharge(
+    amount: Int
+    currency: String
+  ): Body
+}
+
+input TextRequestInput {
+  text: String!
+}
+
+input SampleInput {
+  username: String!
+  password: String!
+}
+
+input ChargeInput {
+  amount: Int
+  currency: String
+}
+
+type SampleOutput {
+  message: String
+  result: Result
+  success: Boolean
+}
+
+type Result {
+  data: String
+  msToResponse: Int
+}
+
+type ChargeOutput {
+  body: Body
+}
+
+type Address {
+  city: String
+  country: String
+  line1: String
+  line2: String
+  postal_code: String
+  state: String
+}
+
+type BillingDetails {
+  address: Address
+  email: String
+  name: String
+  phone: String
+}
+
+type Body {
+  charge: Charge
+  success: Boolean
+}
+
+type Card {
+  amount_authorized: String
+  brand: String
+  checks: Checks
+  country: String
+  exp_month: Int
+  exp_year: Int
+  extended_authorization: ExtendedAuthorization
+  fingerprint: String
+  funding: String
+  incremental_authorization: IncrementalAuthorization
+  installments: String
+  last4: String
+  mandate: String
+  multicapture: Multicapture
+  network: String
+  network_token: NetworkToken
+  overcapture: Overcapture
+  three_d_secure: String
+  wallet: String
+}
+
+type Charge {
+  amount: Int
+  amount_captured: Int
+  amount_refunded: Int
+  application: String
+  application_fee: String
+  application_fee_amount: String
+  balance_transaction: String
+  billing_details: BillingDetails
+  calculated_statement_descriptor: String
+  captured: Boolean
+  created: Int
+  currency: String
+  customer: String
+  description: String
+  disputed: Boolean
+  failure_balance_transaction: String
+  failure_code: String
+  failure_message: String
+  id: String
+  invoice: String
+  livemode: Boolean
+  object: String
+  on_behalf_of: String
+  outcome: String
+  paid: Boolean
+  payment_intent: String
+  payment_method: String
+  payment_method_details: PaymentMethodDetails
+  receipt_email: String
+  receipt_number: String
+  receipt_url: String
+  refunded: Boolean
+  refunds: Refunds
+  review: String
+  shipping: String
+  source_transfer: String
+  statement_descriptor: String
+  statement_descriptor_suffix: String
+  status: String
+  transfer_data: String
+  transfer_group: String
+}
+
+type Checks {
+  address_line1_check: String
+  address_postal_code_check: String
+  cvc_check: String
+}
+
+type Data {
+  amount: Int
+  balance_transaction: String
+  charge: String
+  created: Int
+  currency: String
+  destination_details: DestinationDetails
+  id: String
+  object: String
+  payment_intent: String
+  reason: String
+  receipt_number: String
+  source_transfer_reversal: String
+  status: String
+  transfer_reversal: String
+}
+
+type DestinationDetails {
+  card: Card
+  type: String
+}
+
+type ExtendedAuthorization {
+  status: String
+}
+
+type IncrementalAuthorization {
+  status: String
+}
+
+type Multicapture {
+  status: String
+}
+
+type NetworkToken {
+  used: Boolean
+}
+
+type Overcapture {
+  maximum_amount_capturable: Int
+  status: String
+}
+
+type PaymentMethodDetails {
+  card: Card
+  type: String
+}
+
+type Refunds {
+  data: [Data]
+  has_more: Boolean
+  object: String
+  url: String
+}
+

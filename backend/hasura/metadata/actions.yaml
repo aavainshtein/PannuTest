@@ -1,6 +1,37 @@
-actions: []
+actions:
+  - name: actionName
+    definition:
+      kind: asynchronous
+      handler: http://functions:3000/async/timeout
+    comment: long_process_action
+  - name: stripeCharge
+    definition:
+      kind: asynchronous
+      handler: http://functions:3000/process_payment/
+    comment: stripeCharges
 custom_types:
   enums: []
-  input_objects: []
-  objects: []
+  input_objects:
+    - name: TextRequestInput
+    - name: SampleInput
+    - name: ChargeInput
+  objects:
+    - name: SampleOutput
+    - name: Result
+    - name: ChargeOutput
+    - name: Address
+    - name: BillingDetails
+    - name: Body
+    - name: Card
+    - name: Charge
+    - name: Checks
+    - name: Data
+    - name: DestinationDetails
+    - name: ExtendedAuthorization
+    - name: IncrementalAuthorization
+    - name: Multicapture
+    - name: NetworkToken
+    - name: Overcapture
+    - name: PaymentMethodDetails
+    - name: Refunds
   scalars: []

@@ -3,9 +3,30 @@
     "allowJs": true,
     "skipLibCheck": true,
     "noEmit": true,
+    "module": "commonjs",
     "esModuleInterop": true,
-    "resolveJsonModule": true,
+    "moduleResolution": "node",
     "isolatedModules": true,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "target": "ES6", // или "ES2015" и выше
+    "lib": ["ES6", "DOM"], // Добавьте "DOM", если работа с браузерными API
   }
 }
+// {
+//   "compilerOptions": {
+//     "target": "ES6", // или "ES2015" и выше
+//     "lib": ["ES6", "DOM"], // Добавьте "DOM", если работа с браузерными API
+//     "module": "commonjs", // или другой модульный формат, который вы используете
+//     // другие настройки...
+//   }
+// }{
+//   "compilerOptions": {
+//     "target": "ES6",
+//     "module": "commonjs",
+//     "moduleResolution": "node",
+//     "strict": true,
+//     "esModuleInterop": true,
+//     "skipLibCheck": true,
+//     "forceConsistentCasingInFileNames": true
+//   }
+// }
