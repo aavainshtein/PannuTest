@@ -1,0 +1,62 @@
+table:
+  name: post
+  schema: public
+object_relationships:
+  - name: user
+    using:
+      foreign_key_constraint_on: author_id
+array_relationships:
+  - name: post_keywords
+    using:
+      foreign_key_constraint_on:
+        column: post_id
+        table:
+          name: post_keyword
+          schema: public
+insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      set:
+        author_id: x-hasura-User-Id
+      columns: []
+    comment: ""
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - is_public
+        - content
+        - title
+        - created_at
+        - updated_at
+        - author_id
+        - id
+      filter:
+        _or:
+          - is_public:
+              _eq: true
+          - _and:
+              - is_public:
+                  _eq: false
+              - _or:
+                  - author_id:
+                      _eq: X-Hasura-User-Id
+                  - user:
+                      payments:
+                        status:
+                          _eq: succeeded
+      allow_aggregations: true
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - content
+        - is_public
+        - title
+      filter:
+        author_id:
+          _eq: X-Hasura-User-Id
+      check: null
+    comment: ""
