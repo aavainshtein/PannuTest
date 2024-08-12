@@ -170,7 +170,7 @@ paths:
       security:
         - stripeSignature: []
 
-  /keyword_validation/handler:
+  /keyword_validation/:
     post:
       summary: Sends a message to RabbitMQ and processes the response
       operationId: sendMessageToRabbitMQ
