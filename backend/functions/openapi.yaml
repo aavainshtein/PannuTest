@@ -170,6 +170,73 @@ paths:
       security:
         - stripeSignature: []
 
+  /keyword_validation/handler:
+    post:
+      summary: Sends a message to RabbitMQ and processes the response
+      operationId: sendMessageToRabbitMQ
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  type: string
+                  description: The input string to send to RabbitMQ.
+                  example: 'test string'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates if the operation was successful.
+                    example: true
+                  data:
+                    type: object
+                    description: Contains the result of the mutation if successful.
+                    properties:
+                      id:
+                        type: integer
+                        description: The ID of the inserted keyword.
+                        example: 1
+        '400':
+          description: Received 'false' response from FastAPI
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates if the operation was successful.
+                    example: false
+                  error:
+                    type: string
+                    description: Error message indicating what went wrong.
+                    example: 'Received false from FastAPI, no data inserted.'
+        '500':
+          description: Error occurred during the process
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates if the operation was successful.
+                    example: false
+                  error:
+                    type: string
+                    description: Error message indicating what went wrong.
+                    example: 'Failed to connect to RabbitMQ'
+      tags:
+        - RabbitMQ
 components:
   securitySchemes:
     apiKey:
