@@ -83,7 +83,7 @@ paths:
       security:
         - apiKey: []
 
-  /process_payment/update-payment-status:
+  /process_payment/update_payment_status:
     post:
       summary: Handle Stripe Webhook Events
       description: This endpoint processes Stripe webhook events, such as `payment_intent.succeeded` and `payment_intent.payment_failed`, and updates the payment status in the database.
