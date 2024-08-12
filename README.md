@@ -2,6 +2,8 @@
 
 ```sh
 cp .env.example .env
+cp docker-compose.example.yaml docker-compose.yaml
+
 docker-compose up -d
 ```
 
@@ -104,7 +106,6 @@ Payment can be created through the hasura GraphQL api. It is 2 step process.
 - Hasura screnshot of action “**createPaymentIntent**”
   ![localhost_8080_console_data_default_schema_public_tables_post_keyword_modify (5).png](<Test%20Case%20Mini%20blog%20platform%20ec3712983a2d45e7be76d8016ea3d0eb/localhost_8080_console_data_default_schema_public_tables_post_keyword_modify_(5).png>)
 - Code for serverless function ”**createPaymentIntent”**
-
   ```sql
   import { apollo, gql } from '../_lib/apollo'
   import axios from 'axios'
@@ -218,9 +219,7 @@ Payment can be created through the hasura GraphQL api. It is 2 step process.
   export default handler
 
   ```
-
 - Code for webhook ”update_payment_status**”**
-
   ```sql
   import { apollo, gql } from '../_lib/apollo'
   import { Request, Response } from 'express'
@@ -347,7 +346,6 @@ A post will contain information such as the title, content, a boolean flag "is_p
   ![localhost_8080_console_data_default_schema_public_tables_post_keyword_modify (2).png](<Test%20Case%20Mini%20blog%20platform%20ec3712983a2d45e7be76d8016ea3d0eb/localhost_8080_console_data_default_schema_public_tables_post_keyword_modify_(2).png>)
   ###
 - Up migration for table “Post”
-
   ```sql
   CREATE TABLE "public"."post" ("id" uuid NOT NULL DEFAULT gen_random_uuid(),
   "created_at" timestamptz NOT NULL DEFAULT now(),
@@ -391,7 +389,6 @@ Main buisnes logic can be achive through the Hasura’s permissions and relation
 - User can select all his own posts.
 - Paid users can select posts with is_public = false
 - Permission for role User on select from table “post”
-
   ```sql
   {
     "_or": [
@@ -413,7 +410,6 @@ Also, for the purpose of this test, I have implemented a microservice to validat
   ![localhost_8080_console_data_default_schema_public_tables_post_keyword_modify.png](Test%20Case%20Mini%20blog%20platform%20ec3712983a2d45e7be76d8016ea3d0eb/localhost_8080_console_data_default_schema_public_tables_post_keyword_modify.png)
   [https://www.notion.so](https://www.notion.so)
 - Up migration for table “keyword”
-
   ```sql
   CREATE TABLE "public"."keyword" (
     "id" uuid NOT NULL DEFAULT gen_random_uuid (),
@@ -427,11 +423,9 @@ Also, for the purpose of this test, I have implemented a microservice to validat
   
   CREATE EXTENSION IF NOT EXISTS pgcrypto;
   ```
-
-- Hasura screnshot of table “post*keyword”
-  ![localhost_8080_console_data_default_schema_public_tables_post_keyword_modify (3).png](<Test%20Case%20Mini%20blog%20platform%20ec3712983a2d45e7be76d8016ea3d0eb/localhost_8080_console_data_default_schema_public_tables_post_keyword_modify*(3).png>)
+- Hasura screnshot of table “post_keyword”
+  ![localhost_8080_console_data_default_schema_public_tables_post_keyword_modify (3).png](<Test%20Case%20Mini%20blog%20platform%20ec3712983a2d45e7be76d8016ea3d0eb/localhost_8080_console_data_default_schema_public_tables_post_keyword_modify_(3).png>)
 - Up migration for table “post_keyword”
-
   ```sql
   CREATE TABLE "public"."post_keyword" (
     "id" uuid NOT NULL DEFAULT gen_random_uuid (),
@@ -466,7 +460,6 @@ Logic behind microservice is more complicated. It has X steps.
 - A FastAPI service listens to the task_queue, validates the messages, and returns a response with a true/false value through the response_queue.
 - The same serverless function that sent the message listens to the response_queue, and if the response is true, it stores the keyword in the keywords table with admin rights.
 - Code of fastApi service for validation
-
   ```sql
   from fastapi import FastAPI
   import pika
@@ -531,9 +524,7 @@ Logic behind microservice is more complicated. It has X steps.
       print("Disconnected from RabbitMQ")
 
   ```
-
 - Code of serverless function for send and precess response from Rabbit
-
   ```sql
   import amqp from 'amqplib/callback_api'
   import { apollo, gql } from '../_lib/apollo'
@@ -631,3 +622,312 @@ Logic behind microservice is more complicated. It has X steps.
 Didn’t have opprtunity to accomplish this, but wil gladly discuss it.
 
 I will probably implement another service that will use the Hasura admin secret to perform mutations but will also send different user credentials to test permissions.
+
+# OpenApi
+
+- OpenApi yaml file
+  ```yaml
+  openapi: 3.0.1
+  info:
+    title: Payment Processing API
+    description: APIs for creating PaymentIntents with Stripe and handling payment status updates via webhooks.
+    version: 1.0.0
+  paths:
+    /process_payment/create_payment:
+      post:
+        summary: Create a PaymentIntent and save payment data
+        operationId: createPaymentIntent
+        requestBody:
+          description: Parameters required to create a PaymentIntent and save it
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  input:
+                    type: object
+                    properties:
+                      processPaymentCreatePaymentInput:
+                        type: object
+                        properties:
+                          amount:
+                            type: integer
+                            description: Payment amount in the smallest currency unit (e.g., cents for USD)
+                            example: 1000
+                          currency:
+                            type: string
+                            description: ISO 4217 currency code
+                            example: usd
+                          paymentMethodId:
+                            type: string
+                            description: Payment method ID obtained from the client
+                            example: pm_card_visa
+                    required:
+                      - processPaymentCreatePaymentInput
+                  session_variables:
+                    type: object
+                    properties:
+                      x-hasura-user-id:
+                        type: string
+                        description: The user ID from Hasura session variables
+                        example: 'f8a07f3e-61b3-4e4a-8e6b-d1ef9f2f9c65'
+                required:
+                  - input
+                  - session_variables
+        responses:
+          '200':
+            description: Successfully created PaymentIntent and saved data
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                      description: Indicates if the operation was successful
+                      example: true
+                    paymentId:
+                      type: string
+                      description: Unique identifier of the created payment record in the database
+                      format: uuid
+                      example: 'f8a07f3e-61b3-4e4a-8e6b-d1ef9f2f9c65'
+          '400':
+            description: Error occurred during the process
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                      description: Indicates if the operation was successful
+                      example: false
+                    error:
+                      type: string
+                      description: Error message describing what went wrong
+                      example: 'GraphQL mutation error'
+        tags:
+          - Payments
+        security:
+          - apiKey: []
+
+    /process_payment/update_payment_status:
+      post:
+        summary: Handle Stripe Webhook Events
+        description: This endpoint processes Stripe webhook events, such as `payment_intent.succeeded` and `payment_intent.payment_failed`, and updates the payment status in the database.
+        operationId: updatePaymentStatus
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The ID of the Stripe event.
+                  object:
+                    type: string
+                    description: The type of the event object.
+                  type:
+                    type: string
+                    description: The type of the Stripe event (e.g., `payment_intent.succeeded`).
+                  data:
+                    type: object
+                    properties:
+                      object:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            description: The ID of the payment intent.
+                          status:
+                            type: string
+                            description: The status of the payment intent.
+                example:
+                  id: evt_test_webhook
+                  object: event
+                  type: payment_intent.succeeded
+                  data:
+                    object:
+                      id: pi_test_payment_intent
+                      status: succeeded
+        responses:
+          '200':
+            description: Webhook event successfully processed.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    received:
+                      type: boolean
+                      description: Confirmation that the event was processed.
+                example:
+                  received: true
+          '400':
+            description: Webhook signature verification failed.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                    error:
+                      type: string
+                example:
+                  success: false
+                  error: 'Webhook signature verification failed.'
+          '500':
+            description: Internal server error while updating payment status.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                    error:
+                      type: string
+                example:
+                  success: false
+                  error: 'Internal Server Error'
+        tags:
+          - Webhooks
+        security:
+          - stripeSignature: []
+
+    /keyword_validation/insertKeywordIfValidated:
+      post:
+        summary: Sends a message to RabbitMQ and processes the response
+        operationId: sendMessageToRabbitMQ
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  input:
+                    type: string
+                    description: The input string to send to RabbitMQ.
+                    example: 'test string'
+        responses:
+          '200':
+            description: Successful response
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                      description: Indicates if the operation was successful.
+                      example: true
+                    data:
+                      type: object
+                      description: Contains the result of the mutation if successful.
+                      properties:
+                        id:
+                          type: integer
+                          description: The ID of the inserted keyword.
+                          example: 1
+          '400':
+            description: Received 'false' response from FastAPI
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                      description: Indicates if the operation was successful.
+                      example: false
+                    error:
+                      type: string
+                      description: Error message indicating what went wrong.
+                      example: 'Received false from FastAPI, no data inserted.'
+          '500':
+            description: Error occurred during the process
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                      description: Indicates if the operation was successful.
+                      example: false
+                    error:
+                      type: string
+                      description: Error message indicating what went wrong.
+                      example: 'Failed to connect to RabbitMQ'
+        tags:
+          - RabbitMQ
+  components:
+    securitySchemes:
+      apiKey:
+        type: apiKey
+        in: header
+        name: x-api-key
+      stripeSignature:
+        type: apiKey
+        name: Stripe-Signature
+        in: header
+
+    schemas:
+      ProcessPaymentCreatePaymentInput:
+        type: object
+        properties:
+          amount:
+            type: integer
+            description: Payment amount in the smallest currency unit (e.g., cents for USD)
+            example: 1000
+          currency:
+            type: string
+            description: ISO 4217 currency code
+            example: usd
+          paymentMethodId:
+            type: string
+            description: Payment method ID obtained from the client
+            example: pm_card_visa
+        required:
+          - amount
+          - currency
+          - paymentMethodId
+
+      CreatePaymentIntentRequest:
+        type: object
+        properties:
+          input:
+            $ref: '#/components/schemas/ProcessPaymentCreatePaymentInput'
+          session_variables:
+            type: object
+            properties:
+              x-hasura-user-id:
+                type: string
+                description: The user ID from Hasura session variables
+                example: 'f8a07f3e-61b3-4e4a-8e6b-d1ef9f2f9c65'
+        required:
+          - input
+          - session_variables
+
+      CreatePaymentIntentResponse:
+        type: object
+        properties:
+          success:
+            type: boolean
+            description: Indicates if the operation was successful
+            example: true
+          paymentId:
+            type: string
+            description: Unique identifier of the created payment record in the database
+            format: uuid
+            example: 'f8a07f3e-61b3-4e4a-8e6b-d1ef9f2f9c65'
+          error:
+            type: string
+            description: Error message if the operation failed
+            example: 'GraphQL mutation error'
+  ```
