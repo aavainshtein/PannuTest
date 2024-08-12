@@ -34,18 +34,14 @@ select_permissions:
         - id
       filter:
         _or:
+          - author_id:
+              _eq: X-Hasura-User-Id
           - is_public:
               _eq: true
-          - _and:
-              - is_public:
-                  _eq: false
-              - _or:
-                  - author_id:
-                      _eq: X-Hasura-User-Id
-                  - user:
-                      payments:
-                        status:
-                          _eq: succeeded
+          - user:
+              payments:
+                status:
+                  _eq: succeeded
       allow_aggregations: true
     comment: ""
 update_permissions:
