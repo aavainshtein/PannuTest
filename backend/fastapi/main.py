@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import pika
 import random
-
+import json
 app = FastAPI()
 
 def get_rabbitmq_connection():
@@ -23,12 +23,34 @@ async def startup_event():
         print(f"Received message from task_queue: {message}")
 
         # Process the message: generate a random boolean (true/false)
-        is_validated = 'true' if random.choice([True, False]) else 'false'
+        is_validated = 'true' 
+        # is_validated = 'true' if random.choice([True, False]) else 'false'
         print(f"Processed message: {is_validated}")
 
-        # Send the response back to the response_queue
-        channel.basic_publish(exchange='', routing_key='response_queue', body=is_validated)
-        print(f"Sent response to response_queue: {is_validated}")
+        # # Send the response back to the response_queue
+        # channel.basic_publish(exchange='', routing_key='response_queue', body=processed_message, properties=pika.BasicProperties(
+        #     correlation_id=properties.correlation_id
+        # ))
+        # print(f"Sent response to response_queue: {processed_message}")
+
+         # Create a response object
+        response = {
+            "is_validated": is_validated,
+            "message": message
+        }
+
+        print(f" response {json.dumps(response)}"),
+
+        # Send the response object back to the response_queue
+        channel.basic_publish(
+            exchange='',
+            routing_key='response_queue',
+            body=json.dumps(response),
+            properties=pika.BasicProperties(
+                correlation_id=properties.correlation_id
+            )
+        )
+        
 
     # Subscribe to the task_queue to receive messages
     channel.basic_consume(queue='task_queue', on_message_callback=callback, auto_ack=True)
