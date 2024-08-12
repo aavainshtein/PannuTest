@@ -40,11 +40,12 @@ export default async function handler(req: Request, res: Response) {
         'response_queue',
         async function (msg) {
           console.log(
-            `Received response from FastAPI: ${msg.content.toString()}`,
+            `Received response from FastAPI: ${JSON.parse(msg.content.toString())}`,
           )
-          const response = msg.content.toString()
+          const response = JSON.parse(msg.content.toString())
+          // const response = msg.content.toString(),
 
-          if (response === 'true') {
+          if (response.is_validated) {
             try {
               const insertKeyword = await apollo.mutate({
                 mutation: gql`
@@ -55,7 +56,7 @@ export default async function handler(req: Request, res: Response) {
                   }
                 `,
                 variables: {
-                  title: input,
+                  title: response.message,
                 },
               })
 
