@@ -1,6 +1,3 @@
-
-# Catchy Platform
-
 ## Configuration
 
 ```sh
@@ -107,6 +104,7 @@ Payment can be created through the hasura GraphQL api. It is 2 step process.
 - Hasura screnshot of action “**createPaymentIntent**”
   ![localhost_8080_console_data_default_schema_public_tables_post_keyword_modify (5).png](<Test%20Case%20Mini%20blog%20platform%20ec3712983a2d45e7be76d8016ea3d0eb/localhost_8080_console_data_default_schema_public_tables_post_keyword_modify_(5).png>)
 - Code for serverless function ”**createPaymentIntent”**
+
   ```sql
   import { apollo, gql } from '../_lib/apollo'
   import axios from 'axios'
@@ -220,7 +218,9 @@ Payment can be created through the hasura GraphQL api. It is 2 step process.
   export default handler
 
   ```
+
 - Code for webhook ”update_payment_status**”**
+
   ```sql
   import { apollo, gql } from '../_lib/apollo'
   import { Request, Response } from 'express'
@@ -347,6 +347,7 @@ A post will contain information such as the title, content, a boolean flag "is_p
   ![localhost_8080_console_data_default_schema_public_tables_post_keyword_modify (2).png](<Test%20Case%20Mini%20blog%20platform%20ec3712983a2d45e7be76d8016ea3d0eb/localhost_8080_console_data_default_schema_public_tables_post_keyword_modify_(2).png>)
   ###
 - Up migration for table “Post”
+
   ```sql
   CREATE TABLE "public"."post" ("id" uuid NOT NULL DEFAULT gen_random_uuid(),
   "created_at" timestamptz NOT NULL DEFAULT now(),
@@ -390,6 +391,7 @@ Main buisnes logic can be achive through the Hasura’s permissions and relation
 - User can select all his own posts.
 - Paid users can select posts with is_public = false
 - Permission for role User on select from table “post”
+
   ```sql
   {
     "_or": [
@@ -411,6 +413,7 @@ Also, for the purpose of this test, I have implemented a microservice to validat
   ![localhost_8080_console_data_default_schema_public_tables_post_keyword_modify.png](Test%20Case%20Mini%20blog%20platform%20ec3712983a2d45e7be76d8016ea3d0eb/localhost_8080_console_data_default_schema_public_tables_post_keyword_modify.png)
   [https://www.notion.so](https://www.notion.so)
 - Up migration for table “keyword”
+
   ```sql
   CREATE TABLE "public"."keyword" (
     "id" uuid NOT NULL DEFAULT gen_random_uuid (),
@@ -424,9 +427,11 @@ Also, for the purpose of this test, I have implemented a microservice to validat
   
   CREATE EXTENSION IF NOT EXISTS pgcrypto;
   ```
-- Hasura screnshot of table “post_keyword”
-  ![localhost_8080_console_data_default_schema_public_tables_post_keyword_modify (3).png](<Test%20Case%20Mini%20blog%20platform%20ec3712983a2d45e7be76d8016ea3d0eb/localhost_8080_console_data_default_schema_public_tables_post_keyword_modify_(3).png>)
+
+- Hasura screnshot of table “post*keyword”
+  ![localhost_8080_console_data_default_schema_public_tables_post_keyword_modify (3).png](<Test%20Case%20Mini%20blog%20platform%20ec3712983a2d45e7be76d8016ea3d0eb/localhost_8080_console_data_default_schema_public_tables_post_keyword_modify*(3).png>)
 - Up migration for table “post_keyword”
+
   ```sql
   CREATE TABLE "public"."post_keyword" (
     "id" uuid NOT NULL DEFAULT gen_random_uuid (),
@@ -461,6 +466,7 @@ Logic behind microservice is more complicated. It has X steps.
 - A FastAPI service listens to the task_queue, validates the messages, and returns a response with a true/false value through the response_queue.
 - The same serverless function that sent the message listens to the response_queue, and if the response is true, it stores the keyword in the keywords table with admin rights.
 - Code of fastApi service for validation
+
   ```sql
   from fastapi import FastAPI
   import pika
@@ -525,7 +531,9 @@ Logic behind microservice is more complicated. It has X steps.
       print("Disconnected from RabbitMQ")
 
   ```
+
 - Code of serverless function for send and precess response from Rabbit
+
   ```sql
   import amqp from 'amqplib/callback_api'
   import { apollo, gql } from '../_lib/apollo'
