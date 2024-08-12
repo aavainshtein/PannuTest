@@ -8,6 +8,21 @@ actions:
         - name: custom-header
           value: X-Hasura-User-Id
     comment: stripe payment intent
+  - name: insertKeywordIfValidated
+    definition:
+      kind: asynchronous
+      handler: http://functions:3000/keyword_validation/insertKeywordIfValidated
+      request_transform:
+        body:
+          action: transform
+          template: |-
+            {
+              "input": {{$body.input.keywordValidationInput.input}}
+            }
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: user
 custom_types:
   enums: []
   input_objects:
@@ -15,6 +30,7 @@ custom_types:
     - name: SampleInput
     - name: ChargeInput
     - name: ProcessPaymentCreatePaymentInput
+    - name: KeywordValidationInput
   objects:
     - name: SampleOutput
     - name: Result
@@ -35,4 +51,6 @@ custom_types:
     - name: PaymentMethodDetails
     - name: Refunds
     - name: ProcessPaymentCreatePayment2
+    - name: Data2
+    - name: KeywordValidation2
   scalars: []

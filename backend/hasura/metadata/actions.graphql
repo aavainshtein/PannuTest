@@ -4,6 +4,12 @@ type Mutation {
   ): ProcessPaymentCreatePayment2
 }
 
+type Mutation {
+  insertKeywordIfValidated(
+    keywordValidationInput: KeywordValidationInput!
+  ): KeywordValidation2
+}
+
 input TextRequestInput {
   text: String!
 }
@@ -22,6 +28,10 @@ input ProcessPaymentCreatePaymentInput {
   amount: Int
   currency: String
   paymentMethodId: String
+}
+
+input KeywordValidationInput {
+  input: String
 }
 
 type SampleOutput {
@@ -189,6 +199,15 @@ type Refunds {
 
 type ProcessPaymentCreatePayment2 {
   paymentId: ID
+  success: Boolean
+}
+
+type Data2 {
+  id: Int
+}
+
+type KeywordValidation2 {
+  data: Data2
   success: Boolean
 }
 

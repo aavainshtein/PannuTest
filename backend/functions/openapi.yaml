@@ -170,7 +170,7 @@ paths:
       security:
         - stripeSignature: []
 
-  /keyword_validation/:
+  /keyword_validation/insertKeywordIfValidated:
     post:
       summary: Sends a message to RabbitMQ and processes the response
       operationId: sendMessageToRabbitMQ

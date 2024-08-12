@@ -4,9 +4,11 @@ import { Request, Response } from 'express'
 import axios from 'axios'
 
 export default async function handler(req: Request, res: Response) {
-  const input = req?.body?.input ? req?.body?.input : 'test string 2'
-  console.log(input)
+  const input = req?.body?.input
+    ? req?.body?.input
+    : 'test string' + Math.random()
 
+  console.log('input:', input)
   // Connect to RabbitMQ and send a message
   amqp.connect('amqp://rabbitmq', function (error0, connection) {
     if (error0) {
