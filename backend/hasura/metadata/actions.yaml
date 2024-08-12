@@ -1,20 +1,20 @@
 actions:
-  - name: actionName
+  - name: createPaymentIntent
     definition:
       kind: asynchronous
-      handler: http://functions:3000/async/timeout
-    comment: long_process_action
-  - name: stripeCharge
-    definition:
-      kind: asynchronous
-      handler: http://functions:3000/process_payment/
-    comment: stripeCharges
+      handler: http://functions:3000/process_payment/create_payment
+      forward_client_headers: true
+      headers:
+        - name: custom-header
+          value: X-Hasura-User-Id
+    comment: stripe payment intent
 custom_types:
   enums: []
   input_objects:
     - name: TextRequestInput
     - name: SampleInput
     - name: ChargeInput
+    - name: ProcessPaymentCreatePaymentInput
   objects:
     - name: SampleOutput
     - name: Result
@@ -34,4 +34,5 @@ custom_types:
     - name: Overcapture
     - name: PaymentMethodDetails
     - name: Refunds
+    - name: ProcessPaymentCreatePayment2
   scalars: []

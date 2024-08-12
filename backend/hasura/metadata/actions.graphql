@@ -1,12 +1,7 @@
 type Mutation {
-  actionName: SampleOutput
-}
-
-type Mutation {
-  stripeCharge(
-    amount: Int
-    currency: String
-  ): Body
+  createPaymentIntent(
+    processPaymentCreatePaymentInput: ProcessPaymentCreatePaymentInput!
+  ): ProcessPaymentCreatePayment2
 }
 
 input TextRequestInput {
@@ -21,6 +16,12 @@ input SampleInput {
 input ChargeInput {
   amount: Int
   currency: String
+}
+
+input ProcessPaymentCreatePaymentInput {
+  amount: Int
+  currency: String
+  paymentMethodId: String
 }
 
 type SampleOutput {
@@ -184,5 +185,10 @@ type Refunds {
   has_more: Boolean
   object: String
   url: String
+}
+
+type ProcessPaymentCreatePayment2 {
+  paymentId: ID
+  success: Boolean
 }
 
