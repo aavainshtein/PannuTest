@@ -1,0 +1,36 @@
+{
+  "rabbit_version": "3.8.9",
+  "users": [
+    {
+      "name": "guest",
+      "password_hash": "guest",
+      "tags": "administrator"
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "guest",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "queues": [
+    {
+      "name": "task_queue",
+      "vhost": "/",
+      "durable": false
+    },
+    {
+      "name": "response_queue",
+      "vhost": "/",
+      "durable": false
+    }
+  ]
+}
