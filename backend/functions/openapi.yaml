@@ -1,0 +1,236 @@
+openapi: 3.0.1
+info:
+  title: Payment Processing API
+  description: APIs for creating PaymentIntents with Stripe and handling payment status updates via webhooks.
+  version: 1.0.0
+paths:
+  /process_payment/create_payment:
+    post:
+      summary: Create a PaymentIntent and save payment data
+      operationId: createPaymentIntent
+      requestBody:
+        description: Parameters required to create a PaymentIntent and save it
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  type: object
+                  properties:
+                    processPaymentCreatePaymentInput:
+                      type: object
+                      properties:
+                        amount:
+                          type: integer
+                          description: Payment amount in the smallest currency unit (e.g., cents for USD)
+                          example: 1000
+                        currency:
+                          type: string
+                          description: ISO 4217 currency code
+                          example: usd
+                        paymentMethodId:
+                          type: string
+                          description: Payment method ID obtained from the client
+                          example: pm_card_visa
+                  required:
+                    - processPaymentCreatePaymentInput
+                session_variables:
+                  type: object
+                  properties:
+                    x-hasura-user-id:
+                      type: string
+                      description: The user ID from Hasura session variables
+                      example: 'f8a07f3e-61b3-4e4a-8e6b-d1ef9f2f9c65'
+              required:
+                - input
+                - session_variables
+      responses:
+        '200':
+          description: Successfully created PaymentIntent and saved data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates if the operation was successful
+                    example: true
+                  paymentId:
+                    type: string
+                    description: Unique identifier of the created payment record in the database
+                    format: uuid
+                    example: 'f8a07f3e-61b3-4e4a-8e6b-d1ef9f2f9c65'
+        '400':
+          description: Error occurred during the process
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates if the operation was successful
+                    example: false
+                  error:
+                    type: string
+                    description: Error message describing what went wrong
+                    example: 'GraphQL mutation error'
+      tags:
+        - Payments
+      security:
+        - apiKey: []
+
+  /process_payment/update-payment-status:
+    post:
+      summary: Handle Stripe Webhook Events
+      description: This endpoint processes Stripe webhook events, such as `payment_intent.succeeded` and `payment_intent.payment_failed`, and updates the payment status in the database.
+      operationId: updatePaymentStatus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: The ID of the Stripe event.
+                object:
+                  type: string
+                  description: The type of the event object.
+                type:
+                  type: string
+                  description: The type of the Stripe event (e.g., `payment_intent.succeeded`).
+                data:
+                  type: object
+                  properties:
+                    object:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The ID of the payment intent.
+                        status:
+                          type: string
+                          description: The status of the payment intent.
+              example:
+                id: evt_test_webhook
+                object: event
+                type: payment_intent.succeeded
+                data:
+                  object:
+                    id: pi_test_payment_intent
+                    status: succeeded
+      responses:
+        '200':
+          description: Webhook event successfully processed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: boolean
+                    description: Confirmation that the event was processed.
+              example:
+                received: true
+        '400':
+          description: Webhook signature verification failed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+              example:
+                success: false
+                error: 'Webhook signature verification failed.'
+        '500':
+          description: Internal server error while updating payment status.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+              example:
+                success: false
+                error: 'Internal Server Error'
+      tags:
+        - Webhooks
+      security:
+        - stripeSignature: []
+
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: x-api-key
+    stripeSignature:
+      type: apiKey
+      name: Stripe-Signature
+      in: header
+
+  schemas:
+    ProcessPaymentCreatePaymentInput:
+      type: object
+      properties:
+        amount:
+          type: integer
+          description: Payment amount in the smallest currency unit (e.g., cents for USD)
+          example: 1000
+        currency:
+          type: string
+          description: ISO 4217 currency code
+          example: usd
+        paymentMethodId:
+          type: string
+          description: Payment method ID obtained from the client
+          example: pm_card_visa
+      required:
+        - amount
+        - currency
+        - paymentMethodId
+
+    CreatePaymentIntentRequest:
+      type: object
+      properties:
+        input:
+          $ref: '#/components/schemas/ProcessPaymentCreatePaymentInput'
+        session_variables:
+          type: object
+          properties:
+            x-hasura-user-id:
+              type: string
+              description: The user ID from Hasura session variables
+              example: 'f8a07f3e-61b3-4e4a-8e6b-d1ef9f2f9c65'
+      required:
+        - input
+        - session_variables
+
+    CreatePaymentIntentResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the operation was successful
+          example: true
+        paymentId:
+          type: string
+          description: Unique identifier of the created payment record in the database
+          format: uuid
+          example: 'f8a07f3e-61b3-4e4a-8e6b-d1ef9f2f9c65'
+        error:
+          type: string
+          description: Error message if the operation failed
+          example: 'GraphQL mutation error'
