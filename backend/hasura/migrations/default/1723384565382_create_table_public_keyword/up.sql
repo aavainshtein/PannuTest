@@ -1,6 +1,6 @@
 CREATE TABLE
     "public"."keyword" (
-        "id" uuid NOT NULL DEFAULT gen_random_uuid (),
+        "id" UUID NOT NULL DEFAULT gen_random_uuid (),
         "created_at" timestamptz NOT NULL DEFAULT now (),
         "title" text NOT NULL,
         PRIMARY KEY ("id"),
