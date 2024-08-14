@@ -51,8 +51,8 @@ erDiagram
         text error_message
     }
 
-    POST ||--o{ POST_KEYWORD : "contains"
-    KEYWORD ||--o{ POST_KEYWORD : "contains"
+    POST ||--o{ POST_KEYWORD : contains
+    KEYWORD ||--o{ POST_KEYWORD : contains
     POST ||--|| PAYMENT : "author has"
 ```
 
