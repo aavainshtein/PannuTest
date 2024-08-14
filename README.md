@@ -39,6 +39,57 @@ Additionally, there will be a microservice for validating keywords (for example,
 I will develop everything locally. For this, I will run Docker containers for Hasura, PostgreSQL, serverless functions instead of AWS Lambda, Stripe-mock instead of real Stripe, FastAPI, and RabbitMQ for message queues.
 
 # Design.
+```mermaid
+erDiagram
+    USER {
+        UUID id PK
+        timestamptz created_at "DEFAULT now()"
+        timestamptz updated_at "DEFAULT now()"
+        timestamptz last_seen "NULLABLE"
+       
+    }
+
+    POST {
+        UUID id PK
+        timestamptz created_at "DEFAULT now()"
+        timestamptz updated_at "DEFAULT now()"
+        UUID author_id FK
+        text title
+        text content
+        boolean is_public "DEFAULT TRUE"
+    }
+
+    KEYWORD {
+        UUID id PK
+        timestamptz created_at "DEFAULT now()"
+        text title "UNIQUE"
+    }
+
+    POST_KEYWORD {
+        UUID id PK
+        timestamptz created_at "DEFAULT now()"
+        UUID post_id FK
+        UUID keyword_id FK
+    }
+
+    PAYMENT {
+        UUID id PK
+        timestamptz created_at "DEFAULT now()"
+        timestamptz updated_at "DEFAULT now()"
+        UUID user_id FK
+        text stripe_payment_id "UNIQUE"
+        integer amount
+        text currency
+        text status
+        text payment_method
+        text error_message "NULLABLE"
+    }
+
+    USER ||--o| POST : "author"
+    USER ||--o| PAYMENT : "payer"
+    POST ||--o{ POST_KEYWORD : "keywords"
+    KEYWORD ||--o{ POST_KEYWORD : "posts"
+```
 
 Next you will find description of the system’s different parts.
 
