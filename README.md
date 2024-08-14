@@ -106,7 +106,7 @@ Payment can be created through the hasura GraphQL api. It is 2 step process.
 
  <details>
   <summary>Hasura screnshot of action “**createPaymentIntent**” </summary>
-  some tex
+  
   ![localhost_8080_console_data_default_schema_public_tables_post_keyword_modify (5).png](<Test%20Case%20Mini%20blog%20platform%20ec3712983a2d45e7be76d8016ea3d0eb/localhost_8080_console_data_default_schema_public_tables_post_keyword_modify_(5).png>)
   
   </details>
