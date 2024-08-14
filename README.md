@@ -103,8 +103,8 @@ Payment can be created through the hasura GraphQL api. It is 2 step process.
 1. To handle payments, I created and added an action called `createPaymentIntent`, which invokes a serverless function with parameters such as payment amount, currency, and payment type ID. The `user_id` is included in the header from Hasura. This action initializes the Stripe payment and stores the payment data (most importantly, the `stripe_payment_id`) in the payments table.
 2. As payments can take a really long time and some steps, such as 3D Secure checks, to proceed, I also created a webhook for Stripe responses about the payment status. This webhook updates the payment record for the given `stripe_payment_id`.
 
-- Hasura screnshot of action “**createPaymentIntent**”
-- <details>
+
+ <details>
   <summary>Hasura screnshot of action “**createPaymentIntent**” </summary>
   some tex
   ![localhost_8080_console_data_default_schema_public_tables_post_keyword_modify (5).png](<Test%20Case%20Mini%20blog%20platform%20ec3712983a2d45e7be76d8016ea3d0eb/localhost_8080_console_data_default_schema_public_tables_post_keyword_modify_(5).png>)
