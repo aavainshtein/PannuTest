@@ -104,7 +104,10 @@ Payment can be created through the hasura GraphQL api. It is 2 step process.
 2. As payments can take a really long time and some steps, such as 3D Secure checks, to proceed, I also created a webhook for Stripe responses about the payment status. This webhook updates the payment record for the given `stripe_payment_id`.
 
 - Hasura screnshot of action “**createPaymentIntent**”
+- <details>
+  <summary>Hasura screnshot of action “**createPaymentIntent**” </summary>
   ![localhost_8080_console_data_default_schema_public_tables_post_keyword_modify (5).png](<Test%20Case%20Mini%20blog%20platform%20ec3712983a2d45e7be76d8016ea3d0eb/localhost_8080_console_data_default_schema_public_tables_post_keyword_modify_(5).png>)
+  </details>
 - Code for serverless function ”**createPaymentIntent”**
   ```sql
   import { apollo, gql } from '../_lib/apollo'
