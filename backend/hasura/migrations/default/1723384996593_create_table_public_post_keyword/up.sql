@@ -5,8 +5,8 @@ CREATE TABLE
         "post_id" UUID NOT NULL,
         "keyword_id" UUID NOT NULL,
         PRIMARY KEY ("id"),
-        FOREIGN KEY ("keyword_id") REFERENCES "public"."keyword" ("id") ON UPDATE restrict ON DELETE restrict,
-        FOREIGN KEY ("post_id") REFERENCES "public"."post" ("id") ON UPDATE restrict ON DELETE restrict
+        FOREIGN KEY ("keyword_id") REFERENCES "public"."keyword" ("id") ON UPDATE restrict ON DELETE cascade,
+        FOREIGN KEY ("post_id") REFERENCES "public"."post" ("id") ON UPDATE restrict ON DELETE cascade
     );
 
 COMMENT ON TABLE "public"."post_keyword" IS 'join table set posts keywords';
