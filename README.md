@@ -11,50 +11,7 @@ docker-compose up -d
 
 Created: August 12, 2024 1:48 PM
 
-# Database Schema
 
-```mermaid
-erDiagram
-    POST {
-        UUID id PK
-        timestamptz created_at
-        timestamptz updated_at
-        UUID author_id FK
-        text title
-        text content
-        boolean is_public
-    }
-
-    KEYWORD {
-        UUID id PK
-        timestamptz created_at
-        text title UNIQUE
-    }
-
-    POST_KEYWORD {
-        UUID id PK
-        timestamptz created_at
-        UUID post_id FK
-        UUID keyword_id FK
-    }
-
-    PAYMENT {
-        UUID id PK
-        timestamptz created_at
-        timestamptz updated_at
-        UUID user_id FK
-        text stripe_payment_id UNIQUE
-        integer amount
-        text currency
-        text status
-        text payment_method
-        text error_message
-    }
-
-    POST ||--o{ POST_KEYWORD : contains
-    KEYWORD ||--o{ POST_KEYWORD : contains
-    POST ||--|| PAYMENT : "author has"
-```
 
 # Task.
 
