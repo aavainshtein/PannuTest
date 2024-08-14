@@ -11,6 +11,8 @@ docker-compose up -d
 
 Created: August 12, 2024 1:48 PM
 
+# Database Schema
+
 ```mermaid
 erDiagram
     POST {
